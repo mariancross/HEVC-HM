@@ -321,7 +321,7 @@ Bool TAppEncCfg::parseCfg( Int argc, Char* argv[] )
 #endif
   ("GOPSize,g",               m_iGOPSize,                   1, "GOP size of temporal structure")
   // motion options
-  ("FastSearch",              m_iFastSearch,                1, "0:Full search  1:Diamond  2:PMVFAST")
+  ("FastSearch",              m_iFastSearch,                1, "0:Full search  1:Diamond  2:PMVFAST   3:MDGDS")
   ("SearchRange,-sr",         m_iSearchRange,              96, "Motion search range")
   ("BipredSearchRange",       m_bipredSearchRange,          4, "Motion search range for bipred refinement")
   ("HadamardME",              m_bUseHADME,               true, "Hadamard ME for fractional-pel")
@@ -859,7 +859,7 @@ Void TAppEncCfg::xCheckParameter()
   xConfirmPara( m_iQP <  -6 * (m_internalBitDepthY - 8) || m_iQP > 51,                    "QP exceeds supported range (-QpBDOffsety to 51)" );
   xConfirmPara( m_loopFilterBetaOffsetDiv2 < -6 || m_loopFilterBetaOffsetDiv2 > 6,          "Loop Filter Beta Offset div. 2 exceeds supported range (-6 to 6)");
   xConfirmPara( m_loopFilterTcOffsetDiv2 < -6 || m_loopFilterTcOffsetDiv2 > 6,              "Loop Filter Tc Offset div. 2 exceeds supported range (-6 to 6)");
-  xConfirmPara( m_iFastSearch < 0 || m_iFastSearch > 2,                                     "Fast Search Mode is not supported value (0:Full search  1:Diamond  2:PMVFAST)" );
+  xConfirmPara( m_iFastSearch < 0 || m_iFastSearch > 4,                                     "Fast Search Mode is not supported value (0:Full search  1:Diamond  2:PMVFAST   3:MDGDS)" );
   xConfirmPara( m_iSearchRange < 0 ,                                                        "Search Range must be more than 0" );
   xConfirmPara( m_bipredSearchRange < 0 ,                                                   "Search Range must be more than 0" );
   xConfirmPara( m_iMaxDeltaQP > 7,                                                          "Absolute Delta QP exceeds supported range (0 to 7)" );
