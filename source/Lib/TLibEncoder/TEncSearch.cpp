@@ -70,7 +70,7 @@ static const TComMv s_acMvRefineQ[9] =
   TComMv(  1,  1 )  // 8
 };
 
-// Pattern for 8 point search
+// Square pattern 8 search points 
 static const TComMv s_deltaSquare[8] =
 {
   TComMv( -1, -1 ), // 1
@@ -318,7 +318,7 @@ const Bool bStarRefinementEnable    = 1;  /* enable either star refinement or ra
 const Bool bStarRefinementDiamond   = 1;  /* 1 = xTZ8PointDiamondSearch   0 = xTZ8PointSquareSearch */        \
 const Bool bStarRefinementStop      = 0;                                                                      \
 const UInt uiStarRefinementRounds   = 2;  /* star refinement stop X rounds after best match (must be >=1) */  \
-
+                                                       
 
 __inline Void TEncSearch::xTZSearchHelp( TComPattern* pcPatternKey, IntTZSearchStruct& rcStruct, const Int iSearchX, const Int iSearchY, const UChar ucPointNr, const UInt uiDistance )
 {
@@ -719,6 +719,57 @@ __inline Void TEncSearch::xTZ8PointDiamondSearch( TComPattern* pcPatternKey, Int
 }
 
 //<--
+
+// Start of Multi-Directional Gradient Descent Search
+
+#define MDGD_SEARCH_CONFIGURATION       \
+const Bool bTestOtherPredictedMV = 1;   \
+const Bool bTestZeroVector = 1; 
+
+__inline Void TEncSearch::xMDGDSearchHelp(TComPattern* pcPatternKey, IntMDGDSearchStruct& rcStruct, const Int iSearchX, const Int iSearchY, const UChar ucPointNr)
+{
+  UInt  uiSad;
+
+  Pel*  piRefSrch;
+
+  piRefSrch = rcStruct.piRefY + iSearchY * rcStruct.iYStride + iSearchX;
+
+  //-- jclee for using the SAD function pointer
+  m_pcRdCost->setDistParam(pcPatternKey, piRefSrch, rcStruct.iYStride, m_cDistParam);
+
+  // fast encoder decision: use subsampled SAD when rows > 8 for integer ME
+  if (m_pcEncCfg->getUseFastEnc())
+  {
+    if (m_cDistParam.iRows > 8)
+    {
+      m_cDistParam.iSubShift = 1;
+    }
+  }
+
+  setDistParamComp(0);  // Y component
+
+  // distortion
+  m_cDistParam.bitDepth = g_bitDepthY;
+  uiSad = m_cDistParam.DistFunc(&m_cDistParam);
+
+  // motion cost
+  uiSad += m_pcRdCost->getCost(iSearchX, iSearchY);
+
+  if (uiSad < rcStruct.uiBestSad)
+  {
+    rcStruct.uiBestSad = uiSad;
+    rcStruct.iBestX = iSearchX;
+    rcStruct.iBestY = iSearchY;
+    rcStruct.uiBestRound = 0;
+    rcStruct.ucPointNr = ucPointNr;
+  }
+  else
+  {
+    rcStruct.isImproved = false;
+  }
+}
+
+// End of Multi-Directional Gradient Descent Search
 
 UInt TEncSearch::xPatternRefinement( TComPattern* pcPatternKey,
                                     TComMv baseRefMv,
@@ -4129,7 +4180,7 @@ Void TEncSearch::xPatternSearchFast( TComDataCU* pcCU, TComPattern* pcPatternKey
       xTZSearch( pcCU, pcPatternKey, piRefY, iRefStride, pcMvSrchRngLT, pcMvSrchRngRB, rcMv, ruiSAD );
       break;
 
-    case 2:
+    case 3:
       xMDGDSearch( pcCU, pcPatternKey, piRefY, iRefStride, pcMvSrchRngLT, pcMvSrchRngRB, rcMv, ruiSAD );
       break;
       
@@ -4153,7 +4204,7 @@ Void TEncSearch::xTZSearch( TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* pi
   // init TZSearchStruct
   IntTZSearchStruct cStruct;
   cStruct.iYStride    = iRefStride;
-  cStruct.piRefY      = piRefY;
+  cStruct.piRefY = piRefY;
   cStruct.uiBestSad   = MAX_UINT;
   
   // set rcMv (Median predictor) as start point and as best point
@@ -4312,9 +4363,100 @@ Void TEncSearch::xTZSearch( TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* pi
   ruiSAD = cStruct.uiBestSad - m_pcRdCost->getCost( cStruct.iBestX, cStruct.iBestY );
 }
 
+// MDGDS 
 Void TEncSearch::xMDGDSearch(TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* piRefY, Int iRefStride, TComMv* pcMvSrchRngLT, TComMv* pcMvSrchRngRB, TComMv& rcMv, UInt& ruiSAD)
 {
+  Int   iSrchRngHorLeft = pcMvSrchRngLT->getHor();
+  Int   iSrchRngHorRight = pcMvSrchRngRB->getHor();
+  Int   iSrchRngVerTop = pcMvSrchRngLT->getVer();
+  Int   iSrchRngVerBottom = pcMvSrchRngRB->getVer();
 
+  MDGD_SEARCH_CONFIGURATION
+
+  UInt uiSearchRange = m_iSearchRange;
+  pcCU->clipMv(rcMv);
+  rcMv >>= 2;
+
+  // init IntMDGDSearchStruct
+  IntMDGDSearchStruct cStruct;
+  cStruct.iYStride = iRefStride;
+  cStruct.piRefY = piRefY;
+  cStruct.uiBestSad = MAX_UINT;
+
+  // set rcMv (Median predictor) as start point and as best point
+  xMDGDSearchHelp(pcPatternKey, cStruct, rcMv.getHor(), rcMv.getVer(), 0);
+
+  // test whether one of PRED_A, PRED_B, PRED_C MV is better start point than Median predictor
+  if (bTestOtherPredictedMV)
+  {
+    for (UInt index = 0; index < 3; index++)
+    {
+      TComMv cMv = m_acMvPredictors[index];
+      pcCU->clipMv(cMv);
+      cMv >>= 2;
+      xMDGDSearchHelp(pcPatternKey, cStruct, cMv.getHor(), cMv.getVer(), 0);
+    }
+  }
+
+  // test whether zero Mv is better start point than Median predictor
+  if (bTestZeroVector)
+  {
+    xMDGDSearchHelp(pcPatternKey, cStruct, 0, 0, 0);
+  }
+
+  // init directional IntMDGDSearchStruct
+  IntMDGDSearchStruct dirStruct[8];
+
+  for ( UInt index = 0; index < 8; ++index )
+  {
+    dirStruct[index].iYStride = cStruct.iYStride;
+    dirStruct[index].piRefY = cStruct.piRefY;
+    dirStruct[index].iBestX = cStruct.iBestX;
+    dirStruct[index].iBestY = cStruct.iBestY;
+    dirStruct[index].isImproved = true;
+  }   
+
+  UInt improvements;  
+
+  do
+  {
+    improvements = 0;
+
+    for (UInt index = 0; index < 8; ++index )
+    {
+      Int x = dirStruct[index].iBestX;
+      Int y = dirStruct[index].iBestY;
+
+      do
+      {
+        x += s_deltaSquare[index].getHor();
+        y += s_deltaSquare[index].getVer();
+
+        // Non-valid search range
+        if ( x < iSrchRngHorLeft || x > iSrchRngHorRight || y < iSrchRngVerTop || y > iSrchRngVerBottom )
+        {
+          break;
+        }
+
+        xMDGDSearchHelp(pcPatternKey, dirStruct[index], x, y, index);
+      } while (dirStruct[index].isImproved == true);
+
+      if ( dirStruct[index].uiBestSad < cStruct.uiBestSad)
+      {
+        cStruct.uiBestSad = dirStruct[index].uiBestSad;
+        cStruct.iBestX = dirStruct[index].iBestX;
+        cStruct.iBestY = dirStruct[index].iBestY;
+        cStruct.uiBestRound = dirStruct[index].uiBestRound;
+        cStruct.ucPointNr = dirStruct[index].ucPointNr;
+
+        improvements++;
+      } 
+    }
+  } while ( improvements > 0);
+
+  // write out best match
+  rcMv.set(cStruct.iBestX, cStruct.iBestY);
+  ruiSAD = cStruct.uiBestSad - m_pcRdCost->getCost(cStruct.iBestX, cStruct.iBestY);
 }
 
 Void TEncSearch::xPatternSearchFracDIF(TComDataCU* pcCU,

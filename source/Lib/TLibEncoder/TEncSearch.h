@@ -164,6 +164,22 @@ protected:
   __inline Void xTZ8PointSquareSearch ( TComPattern* pcPatternKey, IntTZSearchStruct& rcStrukt, TComMv* pcMvSrchRngLT, TComMv* pcMvSrchRngRB, const Int iStartX, const Int iStartY, const Int iDist );
   __inline Void xTZ8PointDiamondSearch( TComPattern* pcPatternKey, IntTZSearchStruct& rcStrukt, TComMv* pcMvSrchRngLT, TComMv* pcMvSrchRngRB, const Int iStartX, const Int iStartY, const Int iDist );
   
+  // Multi-Directional Gradient Descent Search
+  typedef struct
+  {
+    Pel*  piRefY;
+    Int   iYStride;
+    Int   iBestX;
+    Int   iBestY;
+    UInt  uiBestRound;
+    UInt  uiBestSad;
+    UChar ucPointNr;
+    Bool  isImproved;
+  } IntMDGDSearchStruct;
+
+  __inline Void xMDGDSearchHelp       (TComPattern* pcPatternKey, IntMDGDSearchStruct& rcStruct, const Int iSearchX, const Int iSearchY, const UChar ucPointNr);
+
+
   Void xGetInterPredictionError( TComDataCU* pcCU, TComYuv* pcYuvOrg, Int iPartIdx, UInt& ruiSAD, Bool Hadamard );
 
 public:
