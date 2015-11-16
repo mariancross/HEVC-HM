@@ -400,6 +400,15 @@ protected:
                                     TComMv*       pcMvSrchRngRB,
                                     TComMv&       rcMv,
                                     UInt&         ruiSAD );
+
+  Void xMDGDSearch                ( TComDataCU*   pcCU,
+                                    TComPattern*  pcPatternKey,
+                                    Pel*          piRefY,
+                                    Int           iRefStride,
+                                    TComMv*       pcMvSrchRngLT,
+                                    TComMv*       pcMvSrchRngRB,
+                                    TComMv&       rcMv,
+                                    UInt&         ruiSAD );
   
   Void xSetSearchRange            ( TComDataCU*   pcCU,
                                     TComMv&       cMvPred,

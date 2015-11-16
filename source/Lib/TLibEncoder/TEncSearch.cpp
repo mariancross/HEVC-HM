@@ -70,6 +70,19 @@ static const TComMv s_acMvRefineQ[9] =
   TComMv(  1,  1 )  // 8
 };
 
+// Pattern for 8 point search
+static const TComMv s_deltaSquare[8] =
+{
+  TComMv( -1, -1 ), // 1
+  TComMv(  0, -1 ), // 2
+  TComMv(  1, -1 ), // 3
+  TComMv( -1,  0 ), // 4
+  TComMv(  1,  0 ), // 5
+  TComMv( -1,  1 ), // 6
+  TComMv(  0,  1 ), // 7
+  TComMv(  1,  1 )  // 8
+};
+
 static const UInt s_auiDFilter[9] =
 {
   0, 1, 0,
@@ -4115,6 +4128,10 @@ Void TEncSearch::xPatternSearchFast( TComDataCU* pcCU, TComPattern* pcPatternKey
     case 1:
       xTZSearch( pcCU, pcPatternKey, piRefY, iRefStride, pcMvSrchRngLT, pcMvSrchRngRB, rcMv, ruiSAD );
       break;
+
+    case 2:
+      xMDGDSearch( pcCU, pcPatternKey, piRefY, iRefStride, pcMvSrchRngLT, pcMvSrchRngRB, rcMv, ruiSAD );
+      break;
       
     default:
       break;
@@ -4293,6 +4310,11 @@ Void TEncSearch::xTZSearch( TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* pi
   // write out best match
   rcMv.set( cStruct.iBestX, cStruct.iBestY );
   ruiSAD = cStruct.uiBestSad - m_pcRdCost->getCost( cStruct.iBestX, cStruct.iBestY );
+}
+
+Void TEncSearch::xMDGDSearch(TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* piRefY, Int iRefStride, TComMv* pcMvSrchRngLT, TComMv* pcMvSrchRngRB, TComMv& rcMv, UInt& ruiSAD)
+{
+
 }
 
 Void TEncSearch::xPatternSearchFracDIF(TComDataCU* pcCU,
