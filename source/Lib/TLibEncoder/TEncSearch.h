@@ -171,7 +171,6 @@ protected:
     Int   iYStride;
     Int   iBestX;
     Int   iBestY;
-    UInt  uiBestRound;
     UInt  uiBestSad;
     UChar ucPointNr;
     Bool  isImproved;

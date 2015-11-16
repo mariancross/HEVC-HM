@@ -760,8 +760,8 @@ __inline Void TEncSearch::xMDGDSearchHelp(TComPattern* pcPatternKey, IntMDGDSear
     rcStruct.uiBestSad = uiSad;
     rcStruct.iBestX = iSearchX;
     rcStruct.iBestY = iSearchY;
-    rcStruct.uiBestRound = 0;
     rcStruct.ucPointNr = ucPointNr;
+    rcStruct.isImproved = true;
   }
   else
   {
@@ -4413,14 +4413,14 @@ Void TEncSearch::xMDGDSearch(TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* p
     dirStruct[index].piRefY = cStruct.piRefY;
     dirStruct[index].iBestX = cStruct.iBestX;
     dirStruct[index].iBestY = cStruct.iBestY;
-    dirStruct[index].isImproved = true;
+    dirStruct[index].uiBestSad = cStruct.uiBestSad;
+    dirStruct[index].ucPointNr = cStruct.ucPointNr;
+    dirStruct[index].isImproved = false;
   }   
-
-  UInt improvements;  
 
   do
   {
-    improvements = 0;
+    cStruct.isImproved = false;
 
     for (UInt index = 0; index < 8; ++index )
     {
@@ -4441,18 +4441,16 @@ Void TEncSearch::xMDGDSearch(TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* p
         xMDGDSearchHelp(pcPatternKey, dirStruct[index], x, y, index);
       } while (dirStruct[index].isImproved == true);
 
-      if ( dirStruct[index].uiBestSad < cStruct.uiBestSad)
+      if ( dirStruct[index].uiBestSad < cStruct.uiBestSad )
       {
         cStruct.uiBestSad = dirStruct[index].uiBestSad;
         cStruct.iBestX = dirStruct[index].iBestX;
         cStruct.iBestY = dirStruct[index].iBestY;
-        cStruct.uiBestRound = dirStruct[index].uiBestRound;
         cStruct.ucPointNr = dirStruct[index].ucPointNr;
-
-        improvements++;
+        cStruct.isImproved = true;
       } 
     }
-  } while ( improvements > 0);
+  } while ( cStruct.isImproved == true );
 
   // write out best match
   rcMv.set(cStruct.iBestX, cStruct.iBestY);
