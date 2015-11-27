@@ -4383,22 +4383,7 @@ Void TEncSearch::xMDGDSearch(TComDataCU* pcCU, TComPattern* pcPatternKey, Pel* p
   cStruct.piRefY = piRefY;
   cStruct.uiBestSad = MAX_UINT;
 
-  // set rcMv (Median predictor) as start point and as best point
-  xMDGDSearchHelp(pcPatternKey, cStruct, rcMv.getHor(), rcMv.getVer(), 0);
-
-  // test whether one of PRED_A, PRED_B, PRED_C MV is better start point than Median predictor
-  if (bTestOtherPredictedMV)
-  {
-    for (UInt index = 0; index < 3; index++)
-    {
-      TComMv cMv = m_acMvPredictors[index];
-      pcCU->clipMv(cMv);
-      cMv >>= 2;
-      xMDGDSearchHelp(pcPatternKey, cStruct, cMv.getHor(), cMv.getVer(), 0);
-    }
-  }
-
-  // test whether zero Mv is better start point than Median predictor
+  // test zero Mv
   if (bTestZeroVector)
   {
     xMDGDSearchHelp(pcPatternKey, cStruct, 0, 0, 0);
