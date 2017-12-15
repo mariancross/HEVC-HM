@@ -522,7 +522,7 @@ TDecCu::xIntraRecBlk(       TComYuv*    pcRecoYuv,
   if (compID == COMPONENT_Y)
   {
     printf(
-      "Pos = (%i, %i); Size = (%i, %i); Intra mode = %i",
+      "Pos = (%i, %i); Size = (%i, %i); Intra mode = %i\n",
       pcCU->getCUPelY(), pcCU->getCUPelX(),  uiWidth, uiHeight,  uiChFinalMode);
   }
 
