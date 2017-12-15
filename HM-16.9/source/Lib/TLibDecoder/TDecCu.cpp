@@ -517,6 +517,15 @@ TDecCu::xIntraRecBlk(       TComYuv*    pcRecoYuv,
   m_pcPrediction->initIntraPatternChType( rTu, compID, bUseFilteredPredictions  DEBUG_STRING_PASS_INTO(sTemp) );
 
 
+  //===== Print intra prediction =====
+  
+  if (compID == CHANNEL_TYPE_LUMA)
+  {
+    printf(
+      "Pos = (%i, %i); Size = (%i, %i); Intra mode = %i",
+      pcCU->getCUPelY(), pcCU->getCUPelX(),  uiWidth, uiHeight,  uiChFinalMode);
+  }
+
   //===== get prediction signal =====
 
   m_pcPrediction->predIntraAng( compID,   uiChFinalMode, 0 /* Decoder does not have an original image */, 0, piPred, uiStride, rTu, bUseFilteredPredictions );
