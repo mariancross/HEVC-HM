@@ -581,6 +581,16 @@ TDecCu::xIntraRecBlk(       TComYuv*    pcRecoYuv,
   m_pcPrediction->initIntraPatternChType( rTu, compID, bUseFilteredPredictions  DEBUG_STRING_PASS_INTO(sTemp) );
 
 
+  //===== Print intra prediction =====
+  
+  if (compID == COMPONENT_Y)
+  {
+    UInt xPos = pcCU->getCUPelX() + g_auiRasterToPelX[ g_auiZscanToRaster[uiAbsPartIdx]];
+    UInt yPos = pcCU->getCUPelY() +  g_auiRasterToPelY[ g_auiZscanToRaster[uiAbsPartIdx]];
+    printf("Pos = (%i, %i); Size = (%i, %i); Intra mode = %i\n", xPos, yPos, uiWidth, uiHeight,  uiChFinalMode);
+  }
+  
+
   //===== get prediction signal =====
 
   m_pcPrediction->predIntraAng( compID,   uiChFinalMode, 0 /* Decoder does not have an original image */, 0, piPred, uiStride, rTu, bUseFilteredPredictions );
