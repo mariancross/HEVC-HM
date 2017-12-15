@@ -519,7 +519,7 @@ TDecCu::xIntraRecBlk(       TComYuv*    pcRecoYuv,
 
   //===== Print intra prediction =====
   
-  if (compID == CHANNEL_TYPE_LUMA)
+  if (compID == COMPONENT_Y)
   {
     printf(
       "Pos = (%i, %i); Size = (%i, %i); Intra mode = %i",
