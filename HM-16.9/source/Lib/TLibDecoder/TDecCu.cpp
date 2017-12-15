@@ -521,9 +521,9 @@ TDecCu::xIntraRecBlk(       TComYuv*    pcRecoYuv,
   
   if (compID == COMPONENT_Y)
   {
-    printf(
-      "Pos = (%i, %i); Size = (%i, %i); Intra mode = %i\n",
-      pcCU->getCUPelY(), pcCU->getCUPelX(),  uiWidth, uiHeight,  uiChFinalMode);
+    UInt xPos = pcCU->getCUPelX() + g_auiRasterToPelX[ g_auiZscanToRaster[uiAbsPartIdx]];
+    UInt yPos = pcCU->getCUPelY() +  g_auiRasterToPelY[ g_auiZscanToRaster[uiAbsPartIdx]];
+    printf("Pos = (%i, %i); Size = (%i, %i); Intra mode = %i\n", xPos, yPos, uiWidth, uiHeight,  uiChFinalMode);
   }
 
   //===== get prediction signal =====
