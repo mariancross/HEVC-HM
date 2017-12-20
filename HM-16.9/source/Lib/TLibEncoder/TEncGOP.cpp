@@ -2198,7 +2198,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
   {
     c += 32;
   }
-
+/*
 #if ADAPTIVE_QP_SELECTION
   printf("POC %4d TId: %1d ( %c-SLICE, nQP %d QP %d ) %10d bits",
          pcSlice->getPOC(),
@@ -2234,7 +2234,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
     }
     printf("]");
   }
-
+*/
   cscd.destroy();
 }
 
