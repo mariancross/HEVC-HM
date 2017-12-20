@@ -1221,21 +1221,23 @@ if(uiHeight == 32 && bIsLuma)
     Pel*  pOrg    = piOrg;
     Pel*  pPred   = piPred;
     Int   iSize   = uiWidth * uiHeight;
-    Double psnr = 0.0
+    Double psnr = 0.0;
+    UInt64 uiSSDtemp = 0;
+    const ComponentID ch = ComponentID(0);
 
     for( UInt uiY = 0; uiY < uiHeight; uiY++ )
     {
       for( UInt uiX = 0; uiX < uiWidth; uiX++ )
       {
-         Intermediate_Int iDiff = (Intermediate_Int)( pOrg[x] - pRec[x] );
-         uiSSDtemp   += iDiff * iDiff;
+         Intermediate_Int iDiff = (Intermediate_Int)(pOrg[uiX] - pPred[uiX]);
+         uiSSDtemp += iDiff * iDiff;
       }
       pPred += uiStride;
-      const Int maxval = 255 << (pcPic->getPicSym()->getSPS().getBitDepth(toChannelType(ch)) - 8);
+      const Int maxval = 255 << (sps.getBitDepth(toChannelType(ch)) - 8);
       const Double fRefValue = (Double) maxval * maxval * iSize;
       psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
     }
-    printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", blkX, blkY, uiChFinalMode, psnr)
+    printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", blkX, blkY, uiChFinalMode, psnr);
 }
 
 
