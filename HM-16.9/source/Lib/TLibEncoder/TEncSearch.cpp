@@ -1224,6 +1224,9 @@ if(uiHeight == 32 && bIsLuma)
     Double psnr = 0.0;
     UInt64 uiSSDtemp = 0;
 
+    UInt xPos = pcCU->getCUPelX() + blkX;
+    UInt yPos = pcCU->getCUPelY() + blkY;
+
     for( UInt uiY = 0; uiY < uiHeight; uiY++ )
     {
       for( UInt uiX = 0; uiX < uiWidth; uiX++ )
@@ -1236,7 +1239,7 @@ if(uiHeight == 32 && bIsLuma)
       const Double fRefValue = (Double) maxval * maxval * iSize;
       psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
     }
-    printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", blkX, blkY, uiChFinalMode, psnr);
+    printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", xPos, yPos, uiChFinalMode, psnr);
 }
 
 
