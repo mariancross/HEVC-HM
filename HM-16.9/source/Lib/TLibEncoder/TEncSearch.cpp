@@ -1216,6 +1216,29 @@ Void TEncSearch::xIntraCodingTUBlock(       TComYuv*    pcOrgYuv,
   }
 #endif
 
+if(uiHeight == 32 && bIsLuma)
+{
+    Pel*  pOrg    = piOrg;
+    Pel*  pPred   = piPred;
+    Int   iSize   = uiWidth * uiHeight;
+    Double psnr = 0.0
+
+    for( UInt uiY = 0; uiY < uiHeight; uiY++ )
+    {
+      for( UInt uiX = 0; uiX < uiWidth; uiX++ )
+      {
+         Intermediate_Int iDiff = (Intermediate_Int)( pOrg[x] - pRec[x] );
+         uiSSDtemp   += iDiff * iDiff;
+      }
+      pPred += uiStride;
+      const Int maxval = 255 << (pcPic->getPicSym()->getSPS().getBitDepth(toChannelType(ch)) - 8);
+      const Double fRefValue = (Double) maxval * maxval * iSize;
+      psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
+    }
+    printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", blkX, blkY, uiChFinalMode, psnr)
+}
+
+
   //===== get residual signal =====
   {
     // get residual
