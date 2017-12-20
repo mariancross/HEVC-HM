@@ -1231,7 +1231,7 @@ if(uiHeight == 32 && bIsLuma)
     {
       for( UInt uiX = 0; uiX < uiWidth; uiX++ )
       {
-         Intermediate_Int iDiff = (Intermediate_Int)(pOrg[uiX] - pPred[uiX]);
+         Intermediate_Int iDiff = (Intermediate_Int)(pOrg[xPos + uiX] - pPred[xPos + uiX]);
          uiSSDtemp += iDiff * iDiff;
       }
       pPred += uiStride;
