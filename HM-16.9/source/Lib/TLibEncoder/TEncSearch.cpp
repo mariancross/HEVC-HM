@@ -1231,14 +1231,14 @@ if(uiHeight == 32 && bIsLuma)
     {
       for( UInt uiX = 0; uiX < uiWidth; uiX++ )
       {
-         Intermediate_Int iDiff = (Intermediate_Int)(pOrg[xPos + uiX] - pPred[xPos + uiX]);
+         Intermediate_Int iDiff = (Intermediate_Int)(pOrg[uiX] - pPred[uiX]);
          uiSSDtemp += iDiff * iDiff;
       }
       pPred += uiStride;
       const Int maxval = 255 << (sps.getBitDepth(toChannelType(compID)) - 8);
       const Double fRefValue = (Double) maxval * maxval * iSize;
-      psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
     }
+    psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
     printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", xPos, yPos, uiChFinalMode, psnr);
 }
 
