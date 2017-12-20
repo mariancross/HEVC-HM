@@ -2198,7 +2198,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
   {
     c += 32;
   }
-/*
+
 #if ADAPTIVE_QP_SELECTION
   printf("POC %4d TId: %1d ( %c-SLICE, nQP %d QP %d ) %10d bits",
          pcSlice->getPOC(),
@@ -2215,7 +2215,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
          pcSlice->getSliceQp(),
          uibits );
 #endif
-
+/*
   printf(" [Y %6.4lf dB    U %6.4lf dB    V %6.4lf dB]", dPSNR[COMPONENT_Y], dPSNR[COMPONENT_Cb], dPSNR[COMPONENT_Cr] );
   if (printFrameMSE)
   {
