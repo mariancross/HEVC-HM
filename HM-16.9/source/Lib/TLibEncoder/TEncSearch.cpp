@@ -1219,13 +1219,8 @@ Void TEncSearch::xIntraCodingTUBlock(       TComYuv*    pcOrgYuv,
 if(uiHeight == 32 && bIsLuma)
 {
     Pel*  pOrg    = piOrg;
-    Pel*  pPred   = piPred;
-    Int   iSize   = uiWidth * uiHeight;
-    Double psnr = 0.0;
+    Pel*  pPred   = piPred;    
     UInt64 uiSSDtemp = 0;
-
-    UInt xPos = pcCU->getCUPelX() + blkX;
-    UInt yPos = pcCU->getCUPelY() + blkY;
 
     for( UInt uiY = 0; uiY < uiHeight; uiY++ )
     {
@@ -1235,11 +1230,15 @@ if(uiHeight == 32 && bIsLuma)
          uiSSDtemp += iDiff * iDiff;
       }
       pPred += uiStride;
-      const Int maxval = 255 << (sps.getBitDepth(toChannelType(compID)) - 8);
-      const Double fRefValue = (Double) maxval * maxval * iSize;
     }
-    psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
-    printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", xPos, yPos, uiChFinalMode, psnr);
+
+  UInt xPos = pcCU->getCUPelX() + blkX;
+  UInt yPos = pcCU->getCUPelY() + blkY;
+  Int   iSize   = uiWidth * uiHeight;
+  const Int maxval = 255 << (sps.getBitDepth(toChannelType(compID)) - 8);
+  const Double fRefValue = (Double) maxval * maxval * iSize;
+  Double psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
+  printf("Pos: (%d, %d); Mode: %d; PSNR: %6.4lf dB\n", xPos, yPos, uiChFinalMode, psnr);
 }
 
 
