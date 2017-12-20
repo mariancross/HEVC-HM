@@ -1223,7 +1223,6 @@ if(uiHeight == 32 && bIsLuma)
     Int   iSize   = uiWidth * uiHeight;
     Double psnr = 0.0;
     UInt64 uiSSDtemp = 0;
-    const ComponentID ch = ComponentID(0);
 
     for( UInt uiY = 0; uiY < uiHeight; uiY++ )
     {
@@ -1233,7 +1232,7 @@ if(uiHeight == 32 && bIsLuma)
          uiSSDtemp += iDiff * iDiff;
       }
       pPred += uiStride;
-      const Int maxval = 255 << (sps.getBitDepth(toChannelType(ch)) - 8);
+      const Int maxval = 255 << (sps.getBitDepth(toChannelType(compID)) - 8);
       const Double fRefValue = (Double) maxval * maxval * iSize;
       psnr = ( uiSSDtemp ? 10.0 * log10( fRefValue / (Double)uiSSDtemp ) : 999.99 );
     }
