@@ -2215,7 +2215,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
          pcSlice->getSliceQp(),
          uibits );
 #endif
-/*
+
   printf(" [Y %6.4lf dB    U %6.4lf dB    V %6.4lf dB]", dPSNR[COMPONENT_Y], dPSNR[COMPONENT_Cb], dPSNR[COMPONENT_Cr] );
   if (printFrameMSE)
   {
@@ -2223,7 +2223,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
   }
   printf(" [ET %5.0f ]", dEncTime );
 
-  // printf(" [WP %d]", pcSlice->getUseWeightedPrediction());
+  printf(" [WP %d]", pcSlice->getUseWeightedPrediction());
 
   for (Int iRefList = 0; iRefList < 2; iRefList++)
   {
@@ -2234,7 +2234,7 @@ Void TEncGOP::xCalculateAddPSNR( TComPic* pcPic, TComPicYuv* pcPicD, const Acces
     }
     printf("]");
   }
-*/
+
   cscd.destroy();
 }
 
