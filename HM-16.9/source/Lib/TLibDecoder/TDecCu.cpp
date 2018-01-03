@@ -523,7 +523,7 @@ TDecCu::xIntraRecBlk(       TComYuv*    pcRecoYuv,
   {
     UInt xPos = pcCU->getCUPelX() + g_auiRasterToPelX[ g_auiZscanToRaster[uiAbsPartIdx]];
     UInt yPos = pcCU->getCUPelY() +  g_auiRasterToPelY[ g_auiZscanToRaster[uiAbsPartIdx]];
-    printf("Pos = (%i, %i); Size = (%i, %i); Intra mode = %i\n", xPos, yPos, uiWidth, uiHeight,  uiChFinalMode);
+    printf("Frame = %i; Pos = (%i, %i); Size = (%i, %i); Intra mode = %i\n", pcCU->getSlice()->getPOC(), xPos, yPos, uiWidth, uiHeight,  uiChFinalMode);
   }
 
   //===== get prediction signal =====
