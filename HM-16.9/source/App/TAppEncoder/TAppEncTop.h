@@ -38,6 +38,7 @@
 #ifndef __TAPPENCTOP__
 #define __TAPPENCTOP__
 
+#include <ctime>
 #include <list>
 #include <ostream>
 

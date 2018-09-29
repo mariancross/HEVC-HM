@@ -74,6 +74,8 @@
 
 #define PRINT_RPS_INFO                                    0 ///< Enable/disable the printing of bits used to send the RPS.
 
+#define PRINT_ENCODING_TIME_PER_FRAME                     1
+
 // ====================================================================================================================
 // Tool Switches - transitory (these macros are likely to be removed in future revisions)
 // ====================================================================================================================
