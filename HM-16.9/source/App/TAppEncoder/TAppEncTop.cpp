@@ -47,7 +47,9 @@
 #include "TLibEncoder/AnnexBwrite.h"
 
 using namespace std;
-
+#if USE_TENSORFLOW
+using namespace std;
+#endif
 //! \ingroup TAppEncoder
 //! \{
 
@@ -60,11 +62,34 @@ TAppEncTop::TAppEncTop()
   m_iFrameRcvd = 0;
   m_totalBytes = 0;
   m_essentialBytes = 0;
+  loadModel();
 }
 
 TAppEncTop::~TAppEncTop()
 {
 }
+
+#if USE_TENSORFLOW
+Void TAppEncTop::loadModel()
+{
+    TF_CHECK_OK(NewSession(SessionOptions(), &session));
+    printf("SESSION CREATED");
+     const string pathToGraph =
+        "/home/resources/archive/Paper200_rate/Paper200_rate-116064.meta";
+    const string checkpointPath =
+        "/home/resources/archive/Paper200_rate/Paper200_rate-116064";
+     TF_CHECK_OK(ReadBinaryProto(Env::Default(), pathToGraph, &graphDef));
+    printf("GRAPH LOADED");
+    TF_CHECK_OK(session->Create(graphDef.graph_def()));
+    printf("GRAPH ADDED TO SESSION");
+     const string restoreOpName = graphDef.saver_def().restore_op_name();
+    const string filenameTensorName = graphDef.saver_def().filename_tensor_name();
+     Tensor checkpointPathTensor(DT_STRING, TensorShape());
+    checkpointPathTensor.scalar<string>()() = checkpointPath;
+     tensor_dict feed_dict = {{filenameTensorName, checkpointPathTensor}};
+    TF_CHECK_OK(session->Run(feed_dict, {}, {restoreOpName}, nullptr));
+}
+#endif
 
 Void TAppEncTop::xInitLibCfg()
 {

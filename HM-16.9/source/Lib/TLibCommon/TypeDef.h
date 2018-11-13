@@ -126,6 +126,7 @@
 #define W0038_DB_OPT                                      1 ///< adaptive DB parameter selection, LoopFilterOffsetInPPS and LoopFilterDisable are set to 0 and DeblockingFilterMetric=2;
 #define W0038_CQP_ADJ                                     1 ///< chroma QP adjustment based on TL, CQPTLAdjustEnabled is set to 1;
 
+#define USE_TENSORFLOW                                    1
 // ====================================================================================================================
 // Derived macros
 // ====================================================================================================================

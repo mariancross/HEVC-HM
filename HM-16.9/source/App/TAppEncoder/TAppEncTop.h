@@ -44,6 +44,11 @@
 #include <list>
 #include <ostream>
 
+#if USE_TENSORFLOW
+#include <tensorflow/core/public/session.h>
+#include <tensorflow/core/protobuf/meta_graph.pb.h>
+#endif
+
 #include "TLibEncoder/TEncTop.h"
 #include "TLibVideoIO/TVideoIOYuv.h"
 #include "TLibCommon/AccessUnit.h"
@@ -71,6 +76,10 @@ private:
 
   UInt m_essentialBytes;
   UInt m_totalBytes;
+
+#if USE_TENSORFLOW
+  Void loadModel();
+#endif
 
 protected:
   // initialization
