@@ -62,7 +62,9 @@ TAppEncTop::TAppEncTop()
   m_iFrameRcvd = 0;
   m_totalBytes = 0;
   m_essentialBytes = 0;
+#if USE_TENSORFLOW
   loadModel();
+#endif
 }
 
 TAppEncTop::~TAppEncTop()
