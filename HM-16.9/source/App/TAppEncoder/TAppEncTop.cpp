@@ -530,6 +530,10 @@ Void TAppEncTop::encode()
       m_cTEncTop.setFramesToBeEncoded(m_iFrameRcvd);
     }
 
+#if PRINT_TIME_PER_FRAME
+    time_t begin;
+    time(&begin);
+#endif
     // call encoding function for one frame
     if ( m_isField )
     {
@@ -539,6 +543,13 @@ Void TAppEncTop::encode()
     {
       m_cTEncTop.encode( bEos, flush ? 0 : pcPicYuvOrg, flush ? 0 : &cPicYuvTrueOrg, snrCSC, m_cListPicYuvRec, outputAccessUnits, iNumEncoded );
     }
+
+#if PRINT_TIME_PER_FRAME
+    time_t end;
+    time(&end);
+    double seconds = difftime(end, begin);
+    printf("Time: %f\n", seconds);
+#endif
 
     // write bistream to file if necessary
     if ( iNumEncoded > 0 )

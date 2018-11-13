@@ -85,6 +85,7 @@
 #define W0062_RECALCULATE_QP_TO_ALIGN_WITH_LAMBDA         0 ///< This recalculates QP to align with the derived lambda (same relation as for all intra coding is used). Currently disabled by default.
 #define OPTIONAL_RESET_SAO_ENCODING_AFTER_IRAP            1 ///< Adds command line option to reset SAO parameters after each IRAP.
 
+#define PRINT_TIME_PER_FRAME                              1
 // ====================================================================================================================
 // Tool Switches
 // ====================================================================================================================

@@ -38,6 +38,9 @@
 #ifndef __TAPPENCTOP__
 #define __TAPPENCTOP__
 
+#if PRINT_TIME_PER_FRAME
+#include <ctime>
+#endif
 #include <list>
 #include <ostream>
 
