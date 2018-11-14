@@ -83,11 +83,19 @@ add_library(TAppCommon STATIC ${TAppCommon_SRC})
 # state which binaries to build, you can add additional libraries to link with
 add_executable( TAppDecoder ${TAppDecoder_SRC})
 target_link_libraries(TAppDecoder TLibDecoder TLibCommon  TLibVideoIO TAppCommon dl pthread )
-add_executable( TAppEncoder ${TAppEncoder_SRC})
-target_link_libraries( TAppEncoder TLibEncoder TLibCommon TLibVideoIO TAppCommon dl pthread )
+
 add_executable( TAppDecoderAnalyser ${TAppDecoder_SRC})
 target_link_libraries(TAppDecoderAnalyser TLibDecoderAnalyser TLibCommon  TLibVideoIO TAppCommon dl pthread )
 target_compile_definitions(TAppDecoderAnalyser PUBLIC  RExt__DECODER_DEBUG_BIT_STATISTICS=1)
+
+add_executable( TAppEncoder ${TAppEncoder_SRC})
+find_package(TensorflowCC COMPONENTS Shared)
+if(TensorflowCC_Shared_FOUND)
+    target_link_libraries( TAppEncoder LINK_PUBLIC TensorflowCC::Shared TLibEncoder TLibCommon TLibVideoIO TAppCommon dl pthread )
+else()
+    find_package(TensorflowCC REQUIRED COMPONENTS Static)
+    target_link_libraries( TAppEncoder LINK_PUBLIC TensorflowCC::Static TLibEncoder TLibCommon TLibVideoIO TAppCommon dl pthread )
+endif()
 
 if(NOT HIGH_BIT_DEPTH)
     add_executable( annexBbytecount  "${PROJECT_SOURCE_DIR}/../../source/App/utils/annexBbytecount.cpp" )
